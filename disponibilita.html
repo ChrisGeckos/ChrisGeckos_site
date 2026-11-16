@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disponibilità - ChrisGeckos</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brandGreen: '#22c55e',
+                        brandYellow: '#eab308',
+                        gold: '#d4af37',
+                        darkBg: '#000000',
+                        darkCard: 'rgba(10, 25, 16, 0.7)',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo Nav -->
+                <a href="index.html" class="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <img src="logochrisgeckos1.png" alt="ChrisGeckos Logo" class="h-10 sm:h-12 min-[960px]:max-[1099px]:h-10 w-auto max-w-[28vw] sm:max-w-none object-contain shrink-0" onerror="this.src='https://placehold.co/150x50/06150b/22c55e?text=CHRISGECKOS'">
+                    <span class="site-title font-black tracking-wider title-green whitespace-nowrap">CHRIS<span class="title-yellow">GECKOS</span></span>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <nav class="hidden min-[960px]:flex items-center space-x-0.5 min-[1100px]:space-x-1">
+                    <a href="index.html" id="nav-home" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5">Home</a>
+                    <a href="chi-siamo.html" id="nav-chi-siamo" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-about">Chi Siamo?</span></a>
+                    <a href="schede.html" id="nav-schede" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-guides">Schede Allevamento</span></a>
+                    <a href="disponibilita.html" id="nav-disponibilita" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-brandYellow"><span data-i18n="nav-available">Disponibilità</span></a>
+                    <a href="fiere.html" id="nav-fiere" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-shows">Programma Fiere</span></a>
+                    <a href="contatti.html" id="nav-contatti" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-contact">Contatti</span></a>
+                </nav>
+
+                <!-- Language Switcher & Mobile Menu Button -->
+                <div class="flex items-center gap-1 sm:gap-3 shrink-0">
+                    <button onclick="toggleLanguage()" id="lang-toggle-btn" class="flex items-center gap-1.5 sm:gap-2 bg-white/10 hover:bg-white/20 px-2.5 sm:px-3 py-1.5 rounded-lg border border-brandGreen/40 text-xs font-bold tracking-wider transition-all">
+                        <span class="text-brandYellow">IT</span> | <span class="text-gray-400">EN</span>
+                    </button>
+
+                    <div class="min-[960px]:hidden">
+                        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white p-2">
+                            <i class="fa-solid fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobile-menu" class="hidden min-[960px]:hidden glass-nav border-t border-green-500/20 px-4 pt-2 pb-6 space-y-2">
+            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen">Home</a>
+            <a href="chi-siamo.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-about">Chi Siamo?</span></a>
+            <a href="schede.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-guides">Schede Allevamento</span></a>
+            <a href="disponibilita.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-brandYellow"><span data-i18n="nav-available">Disponibilità</span></a>
+            <a href="fiere.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-shows">Programma Fiere</span></a>
+            <a href="contatti.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-contact">Contatti</span></a>
+        </div>
+    </header>
+
+    <!-- CONTAINER CONTENUTO -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <!-- ================= PAGE: DISPONIBILITÀ ================= -->
+        <section id="page-disponibilita" class="page-section active">
+            <div class="text-center max-w-3xl mx-auto mb-8">
+                <h2 class="text-3xl sm:text-5xl font-black title-yellow mb-4" data-i18n="avail-title">ESEMPLARI DISPONIBILI</h2>
+                <p class="text-gray-300" data-i18n="avail-subtitle">Qui sono riportati gli animali al momento disponibili.</p>
+            </div>
+
+            <!-- Filtri Dinamici Catalogo -->
+            <div class="glass-card p-6 rounded-2xl mb-10 border border-brandGreen/30 space-y-4">
+                <!-- Filtro Specie (voci selezionabili) -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-2" data-i18n="filter-specie-label">Specie</label>
+                    <div id="avail-species-chips" class="flex flex-wrap gap-2">
+                        <button type="button" class="species-chip active" data-species="all" onclick="toggleSpeciesChip(this)"><span data-i18n="filter-all-species">Tutte le Specie</span></button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Filtro Sesso -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 mb-1" data-i18n="filter-sex-label">Sesso</label>
+                        <select id="avail-filter-sex" onchange="applyAvailFilters()" class="w-full bg-black/60 border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brandGreen">
+                            <option value="all" data-i18n="filter-all-sex">Tutti i Sessi</option>
+                            <option value="Maschio" data-i18n="sex-male">Maschio</option>
+                            <option value="Femmina" data-i18n="sex-female">Femmina</option>
+                            <option value="Non Sessato" data-i18n="sex-unsexed">Non Sessato</option>
+                        </select>
+                    </div>
+                    <!-- Filtro Anno di nascita (anni calcolati in automatico) -->
+                    <div id="avail-year-wrap">
+                        <label class="block text-xs font-bold text-gray-400 mb-1" data-i18n="filter-year-label">Anno di nascita</label>
+                        <select id="avail-filter-year" onchange="applyAvailFilters()" class="w-full bg-black/60 border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brandGreen">
+                            <option value="all" data-i18n="filter-year-all">Tutti gli anni</option>
+                        </select>
+                    </div>
+                    <!-- Filtro Stato -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 mb-1" data-i18n="filter-status-label">Stato Disponibilità</label>
+                        <select id="avail-filter-status" onchange="applyAvailFilters()" class="w-full bg-black/60 border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brandGreen">
+                            <option value="all" data-i18n="filter-status-all">Tutti</option>
+                            <option value="Disponibile" data-i18n="filter-status-available">Solo disponibili</option>
+                        </select>
+                    </div>
+                    <!-- Ricerca Testuale -->
+                    <div>
+                        <div class="flex items-center gap-1.5 mb-1">
+                            <label for="avail-search" class="block text-xs font-bold text-gray-400" data-i18n="filter-search-label">Cerca Morph / Codice</label>
+                            <span class="info-wrap relative inline-flex">
+                                <button type="button" onclick="toggleInfoTip(this)" aria-label="Info" class="text-brandYellow hover:text-brandGreen text-sm leading-none"><i class="fa-solid fa-circle-info"></i></button>
+                                <span role="tooltip" class="info-tip absolute left-0 sm:left-auto sm:right-0 top-full mt-2 z-30 w-60 rounded-xl border border-brandYellow/50 bg-black/95 px-3 py-2 text-xs font-semibold text-white shadow-xl" data-i18n="search-info">Inserendo i singoli geni la ricerca restituisce anche le combinazioni.</span>
+                            </span>
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="avail-search" oninput="applyAvailFilters()" placeholder="es. emerine, tangerine eclipse…" data-i18n-ph="ph-avail-search" class="w-full bg-black/60 border border-white/20 rounded-xl pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-brandGreen">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- Azzera filtri (la specie selezionata resta) -->
+                <div class="flex justify-end">
+                    <button type="button" onclick="resetAvailFilters()" class="inline-flex items-center gap-2 border border-brandGreen text-brandGreen hover:bg-brandGreen hover:text-black font-bold text-sm px-4 py-2 rounded-xl transition-all">
+                        <i class="fa-solid fa-rotate-left text-xs"></i><span data-i18n="filter-reset">Azzera filtri</span>
+                    </button>
+                </div>
+                <!-- Avviso sessaggio geco leopardino (visibile solo con Eublepharis macularius selezionato) -->
+                <div id="leopard-notice" class="hidden rounded-xl border border-red-500/60 bg-red-600/20 px-5 py-5 text-center text-white font-bold space-y-4">
+                    <p data-i18n="leopard-notice-1">il sesso del geco leopardino è determinato dalla temperatura di incubazione delle uova</p>
+                    <p data-i18n="leopard-notice-2">F = sicura femmina<br>M = sicuro maschio<br>TSF = incubato come femmina<br>TSM = incubato come maschio</p>
+                    <p data-i18n="leopard-notice-3">se al momento in cui vengono caricati nel sito non sono ancora sessabili, saranno identificati come TSF/TSM, potete contattarci per verificare se il soggetto desiderato è attuamente  sessabili con certezza.</p>
+                </div>
+            </div>
+
+            <!-- Catalogo Grid (schede create da JS dal foglio Google) -->
+            <p id="avail-loading" class="text-center text-gray-400 py-12" data-i18n="avail-loading">Caricamento esemplari...</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="avail-grid">
+            </div>
+
+            <div id="no-avail-results" class="hidden text-center py-12 glass-card rounded-2xl border border-white/10 mt-6">
+                <i class="fa-solid fa-ghost text-4xl text-gray-500 mb-3"></i>
+                <p class="text-gray-300 font-semibold" data-i18n="no-avail-msg">Nessun esemplare trovato con i filtri selezionati.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-nav mt-auto border-t border-brandGreen/20 py-8">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div class="flex items-center justify-center gap-3">
+                <img src="logochrisgeckos1.png" alt="ChrisGeckos Footer Logo" class="h-8 w-auto object-contain" onerror="this.src='https://placehold.co/100x35/06150b/22c55e?text=CHRISGECKOS'">
+                <span class="text-xl font-black title-green">CHRIS<span class="title-yellow">GECKOS</span></span>
+            </div>
+            <p class="text-xs text-gray-400" data-i18n="footer-copy">© 2018 - 2026 ChrisGeckos. Tutti i diritti riservati. Allevamento Rettili Treviso.</p>
+            
+            <!-- Collegamenti Social Inferiori -->
+            <div class="flex items-center gap-4 text-xl">
+                <a href="https://www.instagram.com/chrisgeckos/" target="_blank" class="text-gray-400 hover:text-pink-500 transition-all" title="Instagram @chrisgeckos"><i class="fa-brands fa-instagram text-pink-500"></i></a>
+                <a href="https://www.facebook.com/chrisgeckos" target="_blank" class="text-gray-400 hover:text-blue-500 transition-all" title="Facebook @chrisgeckos"><i class="fa-brands fa-facebook text-blue-500"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed bottom-5 right-5 hidden glass-card border border-brandGreen text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-brandGreen text-xl"></i>
+        <span id="toast-message" class="text-sm font-semibold"></span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

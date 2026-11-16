@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Siamo - ChrisGeckos</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brandGreen: '#22c55e',
+                        brandYellow: '#eab308',
+                        gold: '#d4af37',
+                        darkBg: '#000000',
+                        darkCard: 'rgba(10, 25, 16, 0.7)',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo Nav -->
+                <a href="index.html" class="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <img src="logochrisgeckos1.png" alt="ChrisGeckos Logo" class="h-10 sm:h-12 min-[960px]:max-[1099px]:h-10 w-auto max-w-[28vw] sm:max-w-none object-contain shrink-0" onerror="this.src='https://placehold.co/150x50/06150b/22c55e?text=CHRISGECKOS'">
+                    <span class="site-title font-black tracking-wider title-green whitespace-nowrap">CHRIS<span class="title-yellow">GECKOS</span></span>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <nav class="hidden min-[960px]:flex items-center space-x-0.5 min-[1100px]:space-x-1">
+                    <a href="index.html" id="nav-home" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5">Home</a>
+                    <a href="chi-siamo.html" id="nav-chi-siamo" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-brandYellow"><span data-i18n="nav-about">Chi Siamo?</span></a>
+                    <a href="schede.html" id="nav-schede" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-guides">Schede Allevamento</span></a>
+                    <a href="disponibilita.html" id="nav-disponibilita" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-available">Disponibilità</span></a>
+                    <a href="fiere.html" id="nav-fiere" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-shows">Programma Fiere</span></a>
+                    <a href="contatti.html" id="nav-contatti" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-contact">Contatti</span></a>
+                </nav>
+
+                <!-- Language Switcher & Mobile Menu Button -->
+                <div class="flex items-center gap-1 sm:gap-3 shrink-0">
+                    <button onclick="toggleLanguage()" id="lang-toggle-btn" class="flex items-center gap-1.5 sm:gap-2 bg-white/10 hover:bg-white/20 px-2.5 sm:px-3 py-1.5 rounded-lg border border-brandGreen/40 text-xs font-bold tracking-wider transition-all">
+                        <span class="text-brandYellow">IT</span> | <span class="text-gray-400">EN</span>
+                    </button>
+
+                    <div class="min-[960px]:hidden">
+                        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white p-2">
+                            <i class="fa-solid fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobile-menu" class="hidden min-[960px]:hidden glass-nav border-t border-green-500/20 px-4 pt-2 pb-6 space-y-2">
+            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen">Home</a>
+            <a href="chi-siamo.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-brandYellow"><span data-i18n="nav-about">Chi Siamo?</span></a>
+            <a href="schede.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-guides">Schede Allevamento</span></a>
+            <a href="disponibilita.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-available">Disponibilità</span></a>
+            <a href="fiere.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-shows">Programma Fiere</span></a>
+            <a href="contatti.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-contact">Contatti</span></a>
+        </div>
+    </header>
+
+    <!-- CONTAINER CONTENUTO -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <!-- ================= PAGE: CHI SIAMO? ================= -->
+        <section id="page-chi-siamo" class="page-section active space-y-8">
+            <!-- Banner Ufficiale ChrisGeckos -->
+            <div class="w-full rounded-3xl overflow-hidden border border-brandGreen/30 shadow-2xl glass-card flex justify-center bg-black/40 p-2 sm:p-4">
+                <img src="banner.avif" alt="ChrisGeckos Official Banner" class="w-full h-auto object-contain rounded-2xl" onerror="this.src='https://placehold.co/1200x350/06150b/22c55e?text=CHRISGECKOS+ALLEVAMENTO'">
+            </div>
+
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <h2 class="text-3xl sm:text-5xl font-black title-green mb-4" data-i18n="about-title">CHI SIAMO?</h2>
+                <div class="h-1 w-24 bg-brandYellow mx-auto rounded-full"></div>
+            </div>
+
+            <!-- 1. L'allevamento -->
+            <div class="glass-card p-8 sm:p-10 rounded-3xl border border-brandGreen/20">
+                <h3 class="text-2xl sm:text-3xl font-bold title-yellow mb-4 flex items-center gap-3">
+                    <i class="fa-solid fa-house-chimney-medical text-brandGreen"></i> <span data-i18n="about-sec1-title">L'allevamento</span>
+                </h3>
+                <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed" data-i18n="about-sec1-body">
+                    <p>
+                        <strong class="text-brandGreen">ChrisGeckos</strong> è un allevamento sorto nel 2020 in provincia di Treviso, da un'avventura iniziata qualche anno prima, divenuta subito una passione.
+                    </p>
+                    <p>
+                        Con il nostro allevamento, siamo presenti durante l'anno alla maggior parte degli eventi espositivi del nord / centro-nord d'Italia, potete verificare la presenza consultando l'apposita sezione "Programma fiere", o venirci a trovare direttamente in sede.
+                    </p>
+                    <p>
+                        L'allevamento è per la maggior parte incentrato sulla specie <em class="text-brandYellow">Eublepharis macularius</em> (Geco leopardino) con cui è partito il nostro viaggio nel mondo dei rettili. In allevamento abbiamo varie linee genetiche/selettive con le quali lavoriamo con buoni risultati, una su tutte il morph <strong class="text-brandGreen">Red&Green</strong>, selezione che da anni portiamo avanti.
+                    </p>
+                    <p>
+                        Nel 2022 l'allevamento è stato implementato con altre specie di geco: <em class="text-brandYellow">Paroedura picta</em>, <em class="text-brandYellow">Correlophus ciliatus</em> (Geco crestato), <em class="text-brandYellow">Rhacodactylus auriculatus</em> (Geco gargoyle).
+                    </p>
+                    <p>
+                        Nel corso del 2025/2026 entrano in allevamento diverse sottospecie del genere <span class="text-brandYellow font-semibold">Eublepharis</span> come <em class="text-brandYellow">montanus</em>, <em class="text-brandYellow">fuscus</em> e <em class="text-brandYellow">angramainyu</em> di diverse località.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 2. La nostra etica -->
+            <div class="glass-card p-8 sm:p-10 rounded-3xl border border-brandGreen/20">
+                <h3 class="text-2xl sm:text-3xl font-bold title-green mb-4 flex items-center gap-3">
+                    <i class="fa-solid fa-heart text-brandYellow"></i> <span data-i18n="about-sec2-title">La nostra etica</span>
+                </h3>
+                <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed" data-i18n="about-sec2-body">
+                    <p>
+                        In un mondo in cui l'animale non convenzionale viene visto con timore, in un ambiente dove spesso regnano i pregiudizi, crediamo che solo mettendo in campo competenze divulgative, si possa fare la differenza. Riteniamo che il rapporto umano sia fondamentale, pertanto ci siamo sempre impegnati per assicurarci di fornire ai nuovi proprietari il massimo del supporto.
+                    </p>
+                    <p class="border-l-4 border-brandYellow pl-4 italic text-gray-300">
+                        "Viene fatta formazione pre-cessione a 360° e fornito supporto post-cessione, preparare bene l'acquirente significa garantire le cure ottimali per l'animale ceduto."
+                    </p>
+                </div>
+            </div>
+
+            <!-- 3. Un servizio completo -->
+            <div class="glass-card p-8 sm:p-10 rounded-3xl border border-brandGreen/20">
+                <h3 class="text-2xl sm:text-3xl font-bold title-yellow mb-4 flex items-center gap-3">
+                    <i class="fa-solid fa-boxes-packing text-brandGreen"></i> <span data-i18n="about-sec3-title">Un servizio completo</span>
+                </h3>
+                <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed" data-i18n="about-sec3-body">
+                    <p>
+                        L'allevamento conta varie specie di gechi, disponiamo di animali con genetiche e selezioni importanti, ma anche con genetiche più comuni, animali deserticoli o umidi, per poter accontentare tutti.
+                    </p>
+                    <p>
+                        Il cliente finale riceve sempre il massimo del supporto, al fine di rendere l'esperienza positiva. Per facilitare il neofita offriamo tutto il necessario per una corretta stabulazione, dal terrario ai vari accessori e supplementi alimentari. Collaboriamo regolarmente con altri allevatori e artigiani per i clienti più esigenti.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 4. ChrisGeckos... Le origini -->
+            <div class="glass-card p-8 sm:p-10 rounded-3xl border border-brandGreen/20 relative overflow-hidden">
+                <h3 class="text-2xl sm:text-3xl font-bold title-green mb-6 flex items-center gap-3">
+                    <i class="fa-solid fa-book-open text-brandYellow"></i> <span data-i18n="about-sec4-title">ChrisGeckos... Le origini</span>
+                </h3>
+                <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed" data-i18n="about-sec4-body">
+                    <p>
+                        Da sempre appassionato dalla tecnologia, dagli animali e dal concetto di vita stessa. Dopo aver abbandonato nel 2015 con dispiacere, nonostante gli ottimi risultati, un percorso come allevatore di cani di razza Boxer, l'avvicinamento al mondo degli animali non convenzionali, avvenne per puro caso.
+                    </p>
+                    <p>
+                        L'avventura nasce, a seguito di una curiosità sorta nel 2018, quando mia figlia di allora 4 anni, mi pose la fatidica domanda: <span class="text-brandYellow font-semibold">"papà cos'è un geco?"</span>, da lì iniziarono documentazioni video e cartacee, susseguite poi in ore di ricerche nel web in cui la curiosità e la voglia di sapere aumentarono.
+                    </p>
+                    <p>
+                        Da lì in poi il passo fu breve, con l'acquisto dei primi esemplari di leopardino da gestire assieme a mia figlia. Con il passare delle settimane però, questi animali iniziarono a piacermi sempre di più e ne susseguì l'ingresso nei primi forum e pagine social, la scoperta delle fiere espositive, i primi contatti con gli allevatori e infine la scoperta dei morph...
+                    </p>
+                    <p>
+                        Tutto questo portò nel breve periodo ad un graduale arrivo in casa di svariati esemplari e il conseguente bisogno di creare nuovi spazi, iniziò così verso la metà del 2019 la creazione delle prime strutture e sorse l'idea di iniziare a riprodruire questi fantastici animali. Iniziai quindi a contattare vari allevatori, che si dimostrarono fin da subito molto disponibili, iniziando così a reperire informazioni anche dal lato pratico, visitando vari allevamenti e imparando metodologie e scuole di pensiero diverse.
+                    </p>
+                    <p>
+                        Nel 2020 iniziarono le prime schiuse e con il supporto di allevatori già rodati le spiegazioni per identificare i vari morph, le prime cessioni, le prime un po' timide spiegazioni e iniziai a partecipare alle fiere come supporto ad altri allevatori.
+                    </p>
+                    <p>
+                        Dopo quindi un anno di gavetta, grazie all'esperienza accumulata, nel 2021 nacque l'allevamento di gechi "ChrisGeckos", vennero costruite nuove strutture e introdotte nuove specie, iniziarono le prime esposizioni. Dopo un primo anno entusiasmante, dove il riscontro del pubblico e i feedback risultarono positivi, dal 2022 ChrisGeckos cambiò sede per affrontare un carico di allevamento più elevato e divenne da attività personale a occupazione per tutta la famiglia.
+                    </p>
+                    <p>
+                        Nel corso degli anni questa passione si è trasformato da piccolo hobby a qualcosa di molto più grande, sviluppo di idee, selezioni, studi e ricerche, ma l'obiettivo finale è sempre rimasto lo stesso, lavorare secondo il nostro principio dove la passione, l'etica, il benessere animale, la divulgazione e il supporto al cliente finale ci contraddistingue.
+                    </p>
+                    <p>
+                        ChrisGeckos è per noi sinonimo di un progetto tutto in continua evoluzione, che nel corso degli anni ci ha fatto conoscere animali incredibili e persone fantastiche, dove noi mettiamo tutta l'esperienza accumulata al servizio di tutti quelli che vogliono approcciarsi a questo, come lo definiamo noi "strano mondo".
+                    </p>
+                    <p class="pt-4 text-xl font-bold title-yellow text-right">
+                        <span>Grazie.</span><br>
+                        <span class="text-2xl text-brandGreen font-black">Christian</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-nav mt-auto border-t border-brandGreen/20 py-8">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div class="flex items-center justify-center gap-3">
+                <img src="logochrisgeckos1.png" alt="ChrisGeckos Footer Logo" class="h-8 w-auto object-contain" onerror="this.src='https://placehold.co/100x35/06150b/22c55e?text=CHRISGECKOS'">
+                <span class="text-xl font-black title-green">CHRIS<span class="title-yellow">GECKOS</span></span>
+            </div>
+            <p class="text-xs text-gray-400" data-i18n="footer-copy">© 2018 - 2026 ChrisGeckos. Tutti i diritti riservati. Allevamento Rettili Treviso.</p>
+            
+            <!-- Collegamenti Social Inferiori -->
+            <div class="flex items-center gap-4 text-xl">
+                <a href="https://www.instagram.com/chrisgeckos/" target="_blank" class="text-gray-400 hover:text-pink-500 transition-all" title="Instagram @chrisgeckos"><i class="fa-brands fa-instagram text-pink-500"></i></a>
+                <a href="https://www.facebook.com/chrisgeckos" target="_blank" class="text-gray-400 hover:text-blue-500 transition-all" title="Facebook @chrisgeckos"><i class="fa-brands fa-facebook text-blue-500"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed bottom-5 right-5 hidden glass-card border border-brandGreen text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-brandGreen text-xl"></i>
+        <span id="toast-message" class="text-sm font-semibold"></span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
