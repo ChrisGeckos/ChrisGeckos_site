@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="it" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termini di servizio | ChrisGeckos</title>
+    <meta name="description" content="Termini di servizio per prenotazioni e acquisto di animali da ChrisGeckos.">
+    <meta name="keywords" content="rettili, terraristica, terrari, herping, herp, gechi leopardini, geco leopardino, allevamento rettili, Treviso, geco ocelot, Paroedura picta, geco crestato, Correlophus ciliatus, geco gargoyle, Rhacodactylus auriculatus, geco del lutto, Lepidodactylus lugubris">
+    <link rel="canonical" href="https://www.chrisgeckos.it/termini.html">
+    <meta name="theme-color" content="#000000">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ChrisGeckos">
+    <meta property="og:locale" content="it_IT">
+    <meta property="og:title" content="Termini di servizio | ChrisGeckos">
+    <meta property="og:description" content="Termini di servizio per prenotazioni e acquisto di animali da ChrisGeckos.">
+    <meta property="og:url" content="https://www.chrisgeckos.it/termini.html">
+    <meta property="og:image" content="https://www.chrisgeckos.it/geco-home.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Termini di servizio | ChrisGeckos">
+    <meta name="twitter:description" content="Termini di servizio per prenotazioni e acquisto di animali da ChrisGeckos.">
+    <meta name="twitter:image" content="https://www.chrisgeckos.it/geco-home.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="favicon-chrisgeckos.png">
+    <link rel="apple-touch-icon" href="favicon-chrisgeckos.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tailwind.css">
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo Nav -->
+                <a href="index.html" class="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <img src="logochrisgeckos1.png" alt="ChrisGeckos Logo" class="h-10 sm:h-12 min-[960px]:max-[1099px]:h-10 w-auto max-w-[28vw] sm:max-w-none object-contain shrink-0" onerror="this.src='https://placehold.co/150x50/06150b/22c55e?text=CHRISGECKOS'">
+                    <span class="site-title font-black tracking-wider title-green whitespace-nowrap">CHRIS<span class="title-yellow">GECKOS</span></span>
+                </a>
+
+                <!-- Desktop Nav Links -->
+                <nav class="hidden min-[960px]:flex items-center space-x-0.5 min-[1100px]:space-x-1">
+                    <a href="index.html" id="nav-home" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5">Home</a>
+                    <a href="chi-siamo.html" id="nav-chi-siamo" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-about">Chi Siamo?</span></a>
+                    <a href="schede.html" id="nav-schede" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-guides">Schede Allevamento</span></a>
+                    <a href="disponibilita.html" id="nav-disponibilita" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-available">Disponibilità</span></a>
+                    <a href="fiere.html" id="nav-fiere" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-shows">Programma Fiere</span></a>
+                    <a href="contatti.html" id="nav-contatti" class="nav-btn whitespace-nowrap px-1.5 min-[1100px]:px-2 xl:px-3 py-2 rounded-lg font-semibold text-[12px] min-[1100px]:text-[13px] xl:text-sm transition-all text-gray-300 hover:text-brandGreen hover:bg-white/5"><span data-i18n="nav-contact">Contatti</span></a>
+                </nav>
+
+                <!-- Language Switcher & Mobile Menu Button -->
+                <div class="flex items-center gap-1 sm:gap-3 shrink-0">
+                    <button onclick="toggleLanguage()" id="lang-toggle-btn" class="flex items-center gap-1.5 sm:gap-2 bg-white/10 hover:bg-white/20 px-2.5 sm:px-3 py-1.5 rounded-lg border border-brandGreen/40 text-xs font-bold tracking-wider transition-all">
+                        <span class="text-brandYellow">IT</span> | <span class="text-gray-400">EN</span>
+                    </button>
+
+                    <div class="min-[960px]:hidden">
+                        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white p-2">
+                            <i class="fa-solid fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobile-menu" class="hidden min-[960px]:hidden glass-nav border-t border-green-500/20 px-4 pt-2 pb-6 space-y-2">
+            <a href="index.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen">Home</a>
+            <a href="chi-siamo.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-about">Chi Siamo?</span></a>
+            <a href="schede.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-guides">Schede Allevamento</span></a>
+            <a href="disponibilita.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-available">Disponibilità</span></a>
+            <a href="fiere.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-shows">Programma Fiere</span></a>
+            <a href="contatti.html" class="block w-full text-left px-4 py-3 rounded-lg font-semibold text-gray-200 hover:text-brandGreen"><span data-i18n="nav-contact">Contatti</span></a>
+        </div>
+    </header>
+
+    <!-- CONTAINER CONTENUTO -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <!-- ================= PAGE: TERMINI DI SERVIZIO ================= -->
+        <section id="page-termini" class="page-section active">
+            <div class="max-w-4xl mx-auto space-y-6">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <h1 class="text-3xl sm:text-4xl font-black title-yellow" data-i18n="terms-title">Termini di servizio</h1>
+                    <a href="contatti.html" class="inline-block border border-brandGreen text-brandGreen hover:bg-brandGreen hover:text-black font-bold text-sm px-4 py-2 rounded-lg transition-all">
+                        <i class="fa-solid fa-arrow-left mr-2"></i><span data-i18n="terms-back">Torna al modulo</span>
+                    </a>
+                </div>
+                <div class="glass-card rounded-2xl overflow-hidden border border-brandGreen/20">
+                    <iframe id="terms-frame" title="Termini di servizio" class="block w-full h-[70vh] min-h-[420px] bg-white"></iframe>
+                </div>
+                <p class="text-sm text-gray-400">
+                    <span data-i18n="terms-fallback">Se il documento non si vede,</span>
+                    <a id="terms-open-link" href="#" target="_blank" rel="noopener noreferrer" class="text-brandGreen hover:underline font-semibold" data-i18n="terms-open">aprilo in una nuova scheda</a>.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-nav mt-auto border-t border-brandGreen/20 py-8">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div class="flex items-center justify-center gap-3">
+                <img src="logochrisgeckos1.png" alt="ChrisGeckos Footer Logo" class="h-8 w-auto object-contain" onerror="this.src='https://placehold.co/100x35/06150b/22c55e?text=CHRISGECKOS'">
+                <span class="text-xl font-black title-green">CHRIS<span class="title-yellow">GECKOS</span></span>
+            </div>
+            <p class="text-xs text-gray-400" data-i18n="footer-copy">© 2018 - 2026 ChrisGeckos. Tutti i diritti riservati. Allevamento Rettili Treviso.</p>
+            
+            <!-- Collegamenti Social Inferiori -->
+            <div class="flex items-center gap-4 text-xl">
+                <a href="https://www.instagram.com/chrisgeckos/" target="_blank" class="text-gray-400 hover:text-pink-500 transition-all" title="Instagram @chrisgeckos"><i class="fa-brands fa-instagram text-pink-500"></i></a>
+                <a href="https://www.facebook.com/chrisgeckos" target="_blank" class="text-gray-400 hover:text-blue-500 transition-all" title="Facebook @chrisgeckos"><i class="fa-brands fa-facebook text-blue-500"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed bottom-5 right-5 hidden glass-card border border-brandGreen text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-brandGreen text-xl"></i>
+        <span id="toast-message" class="text-sm font-semibold"></span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
