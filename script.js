@@ -1477,6 +1477,11 @@ function gestisciRitiro() {
     campoTrasporto.classList.add('hidden');
     selectProvincia.removeAttribute('required');
 
+    // Prenotazione di un animale specifico: il codice resta visibile anche prima di scegliere la modalità di ritiro
+    if (!ritiro && inputCodice.value.trim() && document.getElementById('form-oggetto').value === 'Prenotazione') {
+        campoCodice.classList.remove('hidden');
+    }
+
     if (ritiro === 'In allevamento') {
         campoCodice.classList.remove('hidden');
         inputCodice.setAttribute('required', 'required');
@@ -1832,7 +1837,7 @@ async function inviaMessaggio(event) {
         form.reset();
         resetPrefix();
         gestisciOggetto();
-        clearDraft();
+        discardDraft();
     } catch (err) {
         console.error('Invio messaggio fallito:', err);
         let msg;
@@ -1854,90 +1859,94 @@ async function inviaMessaggio(event) {
     }
 }
 
-// ===== Bozza del modulo di contatto (localStorage) =====
-// I dati inseriti restano salvati nel browser mentre si naviga (per esempio leggendo i termini di servizio)
-// e vengono ripristinati al ritorno sulla pagina. La bozza si cancella dopo l'invio o dopo 24 ore.
+// ===== Bozza del modulo di contatto: solo per la visita ai termini di servizio =====
+// I dati inseriti si conservano (localStorage) soltanto quando si clicca "Visualizza termini di servizio",
+// così al ritorno dalla pagina dei termini il modulo si ritrova compilato. In ogni altro caso
+// (cambio pagina, aggiornamento della pagina) il modulo riparte vuoto e la bozza viene scartata.
 const DRAFT_KEY = 'cg_bozza_modulo';
-const DRAFT_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+const DRAFT_MAX_AGE_MS = 2 * 60 * 60 * 1000;
 const DRAFT_FIELDS = ['input-nome', 'input-cognome', 'input-prefisso', 'input-telefono', 'input-email',
     'form-oggetto', 'form-ritiro', 'input-codice', 'select-fiera', 'select-provincia', 'input-messaggio'];
 let draftFiera = null;      // fiera salvata, da selezionare quando l'elenco è caricato
-let draftRestoring = false; // evita di risalvare mentre si ripristina
 
 function saveDraft() {
-    if (draftRestoring || !document.getElementById('form-oggetto')) return;
+    if (!document.getElementById('form-oggetto')) return;
     try {
-        const d = { ts: Date.now() };
+        const d = { ts: Date.now(), fromTerms: true };
         DRAFT_FIELDS.forEach(id => { const el = document.getElementById(id); if (el) d[id] = el.value; });
         const terms = document.getElementById('input-termini');
         d['input-termini'] = !!(terms && terms.checked);
-        // La fiera non ancora selezionabile (elenco in caricamento) non deve cancellare quella già salvata
-        if (!d['select-fiera'] && draftFiera) d['select-fiera'] = draftFiera;
-        const empty = DRAFT_FIELDS.every(id => !d[id]) && !d['input-termini'];
-        if (empty) localStorage.removeItem(DRAFT_KEY); else localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
     } catch (e) { /* storage non disponibile: il modulo funziona comunque */ }
 }
 
-function clearDraft() {
-    draftFiera = null;
+function discardDraft() {
     try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* ignora */ }
 }
 
 function readDraft() {
     try {
         const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
-        return d && Date.now() - d.ts < DRAFT_MAX_AGE_MS ? d : null;
+        return d && d.fromTerms && Date.now() - d.ts < DRAFT_MAX_AGE_MS ? d : null;
     } catch (e) { return null; }
 }
 
-function restoreDraft() {
-    const d = readDraft();
-    if (!d || !document.getElementById('form-oggetto')) return;
-    draftRestoring = true;
-    try {
-        // Un campo si compila solo se è ancora al valore iniziale (vuoto, o prima voce dei menu a tendina):
-        // quello che l'utente o il browser ha già inserito non viene sovrascritto
-        const isDefault = el => el.tagName === 'SELECT' ? el.selectedIndex <= 0 : !el.value;
-        const set = (id, v) => { const el = document.getElementById(id); if (el && v != null && v !== '' && isDefault(el)) el.value = v; };
-        ['input-nome', 'input-cognome', 'input-email', 'input-messaggio'].forEach(id => set(id, d[id]));
-        if (d['input-prefisso']) { set('input-prefisso', d['input-prefisso']); onPrefixInput(document.getElementById('input-prefisso')); }
-        if (d['input-telefono']) { set('input-telefono', d['input-telefono']); onPhoneInput(document.getElementById('input-telefono')); }
-        if (d['form-oggetto']) { set('form-oggetto', d['form-oggetto']); }
-        gestisciOggetto();
-        if (d['form-ritiro']) { set('form-ritiro', d['form-ritiro']); }
-        gestisciRitiro();
-        set('input-codice', d['input-codice']);
-        set('select-provincia', d['select-provincia']);
-        const terms = document.getElementById('input-termini');
-        if (terms && d['input-termini'] && d['form-oggetto'] === 'Prenotazione') terms.checked = true;
-        draftFiera = d['select-fiera'] || null;
-        applyDraftFiera();
-    } finally { draftRestoring = false; }
+function restoreDraft(d) {
+    const set = (id, v) => { const el = document.getElementById(id); if (el && v != null && v !== '') el.value = v; };
+    ['input-nome', 'input-cognome', 'input-email', 'input-messaggio'].forEach(id => set(id, d[id]));
+    if (d['input-prefisso']) { set('input-prefisso', d['input-prefisso']); onPrefixInput(document.getElementById('input-prefisso')); }
+    if (d['input-telefono']) { set('input-telefono', d['input-telefono']); onPhoneInput(document.getElementById('input-telefono')); }
+    set('form-oggetto', d['form-oggetto']); gestisciOggetto();
+    set('form-ritiro', d['form-ritiro']); gestisciRitiro();
+    set('input-codice', d['input-codice']);
+    // il codice compilato resta visibile anche se la modalità di ritiro non è ancora scelta
+    gestisciRitiro();
+    set('select-provincia', d['select-provincia']);
+    const terms = document.getElementById('input-termini');
+    if (terms && d['input-termini'] && d['form-oggetto'] === 'Prenotazione') terms.checked = true;
+    draftFiera = d['select-fiera'] || null;
+    applyDraftFiera();
 }
 
-// Seleziona la fiera salvata appena l'elenco è disponibile (e solo se l'utente non ne ha già scelta un'altra)
+// Seleziona la fiera salvata appena l'elenco è disponibile
 function applyDraftFiera() {
     const select = document.getElementById('select-fiera');
     if (!draftFiera || !select || fiereData === null) return;
-    if (!select.value && [...select.options].some(o => o.value === draftFiera)) {
-        draftRestoring = true; select.value = draftFiera; draftRestoring = false;
-    }
+    if ([...select.options].some(o => o.value === draftFiera)) select.value = draftFiera;
     draftFiera = null;
 }
 
+function resetContactForm() {
+    const form = document.getElementById('form-oggetto').closest('form');
+    form.reset();
+    resetPrefix();
+    gestisciOggetto();
+    setRitiroAlert(false);
+}
+
 function initDraft() {
-    const form = document.getElementById('form-oggetto') && document.getElementById('form-oggetto').closest('form');
+    const oggetto = document.getElementById('form-oggetto');
+    const form = oggetto && oggetto.closest('form');
     if (!form) return;
-    restoreDraft();
-    form.addEventListener('input', saveDraft);
-    form.addEventListener('change', saveDraft);
-    window.addEventListener('pagehide', saveDraft);
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveDraft(); });
-    // Salva subito anche quando si clicca un link che porta fuori dalla pagina (es. "Visualizza termini di servizio")
-    document.addEventListener('click', e => { if (e.target.closest && e.target.closest('a[href]')) saveDraft(); }, true);
-    // Alcuni browser ripristinano i campi dopo il caricamento o rimostrano la pagina dalla cache: si riapplica la bozza
-    window.addEventListener('pageshow', () => restoreDraft());
-    window.addEventListener('load', () => setTimeout(restoreDraft, 0));
+    form.setAttribute('autocomplete', 'off');   // il browser non deve ripristinare da solo i campi dopo un aggiornamento
+
+    // Salva la bozza solo quando si va a leggere i termini di servizio
+    document.addEventListener('click', e => {
+        const a = e.target.closest && e.target.closest('a[href]');
+        if (a && /termini\.html/.test(a.getAttribute('href'))) saveDraft();
+    }, true);
+
+    const nav = (performance.getEntriesByType('navigation')[0] || {}).type;
+    const fromTerms = nav === 'back_forward' || /termini\.html/.test(document.referrer);
+    const d = readDraft();
+    if (d && fromTerms && nav !== 'reload') restoreDraft(d);
+    discardDraft();   // la bozza vale una sola volta
+
+    // Pagina ripresentata dalla memoria del browser (tasto "indietro"): resta com'è solo se si torna dai termini
+    window.addEventListener('pageshow', e => {
+        if (!e.persisted) return;
+        if (readDraft()) discardDraft(); else resetContactForm();
+    });
 }
 
 // ===== Avvio: ogni pagina carica solo ciò che le serve =====
@@ -1946,7 +1955,7 @@ function initDraft() {
     if (document.getElementById('terms-frame')) loadTerms();
     const isContact = !!document.getElementById('form-oggetto');
     const isAvail = !!document.getElementById('avail-grid');
-    if (isContact) { initDraft(); applyPendingBooking(); saveDraft(); }
+    if (isContact) { initDraft(); applyPendingBooking(); }
     if (document.getElementById('fiere-list') || isContact) loadFiere();
     if (isAvail || isContact) loadAnimali();   // il modulo usa i dati degli animali per l'e-mail di riepilogo
     if (isAvail) loadDizionario();
