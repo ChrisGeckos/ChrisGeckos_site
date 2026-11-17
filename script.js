@@ -1360,6 +1360,7 @@ function renderFiere() {
     if (optFiera) optFiera.disabled = !fiereData.some(f => f.stato !== 'no');
 
     applyPendingFiera();
+    applyDraftFiera();
 }
 
 // Tutte le colonne locandina hanno la larghezza della locandina più larga (min. quanto serve al pulsante del sito)
@@ -1831,6 +1832,7 @@ async function inviaMessaggio(event) {
         form.reset();
         resetPrefix();
         gestisciOggetto();
+        clearDraft();
     } catch (err) {
         console.error('Invio messaggio fallito:', err);
         let msg;
@@ -1852,13 +1854,88 @@ async function inviaMessaggio(event) {
     }
 }
 
+// ===== Bozza del modulo di contatto (localStorage) =====
+// I dati inseriti restano salvati nel browser mentre si naviga (per esempio leggendo i termini di servizio)
+// e vengono ripristinati al ritorno sulla pagina. La bozza si cancella dopo l'invio o dopo 24 ore.
+const DRAFT_KEY = 'cg_bozza_modulo';
+const DRAFT_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+const DRAFT_FIELDS = ['input-nome', 'input-cognome', 'input-prefisso', 'input-telefono', 'input-email',
+    'form-oggetto', 'form-ritiro', 'input-codice', 'select-fiera', 'select-provincia', 'input-messaggio'];
+let draftFiera = null;      // fiera salvata, da selezionare quando l'elenco è caricato
+let draftRestoring = false; // evita di risalvare mentre si ripristina
+
+function saveDraft() {
+    if (draftRestoring || !document.getElementById('form-oggetto')) return;
+    try {
+        const d = { ts: Date.now() };
+        DRAFT_FIELDS.forEach(id => { const el = document.getElementById(id); if (el) d[id] = el.value; });
+        const terms = document.getElementById('input-termini');
+        d['input-termini'] = !!(terms && terms.checked);
+        // La fiera non ancora selezionabile (elenco in caricamento) non deve cancellare quella già salvata
+        if (!d['select-fiera'] && draftFiera) d['select-fiera'] = draftFiera;
+        const empty = DRAFT_FIELDS.every(id => !d[id]) && !d['input-termini'];
+        if (empty) localStorage.removeItem(DRAFT_KEY); else localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+    } catch (e) { /* storage non disponibile: il modulo funziona comunque */ }
+}
+
+function clearDraft() {
+    draftFiera = null;
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* ignora */ }
+}
+
+function readDraft() {
+    try {
+        const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+        return d && Date.now() - d.ts < DRAFT_MAX_AGE_MS ? d : null;
+    } catch (e) { return null; }
+}
+
+function restoreDraft() {
+    const d = readDraft();
+    if (!d || !document.getElementById('form-oggetto')) return;
+    draftRestoring = true;
+    try {
+        const set = (id, v) => { const el = document.getElementById(id); if (el && v != null && v !== '') el.value = v; };
+        ['input-nome', 'input-cognome', 'input-email', 'input-messaggio'].forEach(id => set(id, d[id]));
+        if (d['input-prefisso']) { set('input-prefisso', d['input-prefisso']); onPrefixInput(document.getElementById('input-prefisso')); }
+        if (d['input-telefono']) { set('input-telefono', d['input-telefono']); onPhoneInput(document.getElementById('input-telefono')); }
+        if (d['form-oggetto']) { set('form-oggetto', d['form-oggetto']); gestisciOggetto(); }
+        if (d['form-ritiro']) { set('form-ritiro', d['form-ritiro']); gestisciRitiro(); }
+        set('input-codice', d['input-codice']);
+        set('select-provincia', d['select-provincia']);
+        const terms = document.getElementById('input-termini');
+        if (terms && d['input-termini'] && d['form-oggetto'] === 'Prenotazione') terms.checked = true;
+        draftFiera = d['select-fiera'] || null;
+        applyDraftFiera();
+    } finally { draftRestoring = false; }
+}
+
+// Seleziona la fiera salvata appena l'elenco è disponibile (e solo se l'utente non ne ha già scelta un'altra)
+function applyDraftFiera() {
+    const select = document.getElementById('select-fiera');
+    if (!draftFiera || !select || fiereData === null) return;
+    if (!select.value && [...select.options].some(o => o.value === draftFiera)) {
+        draftRestoring = true; select.value = draftFiera; draftRestoring = false;
+    }
+    draftFiera = null;
+}
+
+function initDraft() {
+    const form = document.getElementById('form-oggetto') && document.getElementById('form-oggetto').closest('form');
+    if (!form) return;
+    restoreDraft();
+    form.addEventListener('input', saveDraft);
+    form.addEventListener('change', saveDraft);
+    window.addEventListener('pagehide', saveDraft);
+}
+
 // ===== Avvio: ogni pagina carica solo ciò che le serve =====
 (function init() {
     if (currentLang === 'en') setLanguage('en');
     if (document.getElementById('terms-frame')) loadTerms();
     const isContact = !!document.getElementById('form-oggetto');
     const isAvail = !!document.getElementById('avail-grid');
-    if (isContact) applyPendingBooking();
+    if (isContact) { initDraft(); applyPendingBooking(); saveDraft(); }
     if (document.getElementById('fiere-list') || isContact) loadFiere();
     if (isAvail || isContact) loadAnimali();   // il modulo usa i dati degli animali per l'e-mail di riepilogo
     if (isAvail) loadDizionario();
