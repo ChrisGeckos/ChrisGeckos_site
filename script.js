@@ -1895,12 +1895,17 @@ function restoreDraft() {
     if (!d || !document.getElementById('form-oggetto')) return;
     draftRestoring = true;
     try {
-        const set = (id, v) => { const el = document.getElementById(id); if (el && v != null && v !== '') el.value = v; };
+        // Un campo si compila solo se è ancora al valore iniziale (vuoto, o prima voce dei menu a tendina):
+        // quello che l'utente o il browser ha già inserito non viene sovrascritto
+        const isDefault = el => el.tagName === 'SELECT' ? el.selectedIndex <= 0 : !el.value;
+        const set = (id, v) => { const el = document.getElementById(id); if (el && v != null && v !== '' && isDefault(el)) el.value = v; };
         ['input-nome', 'input-cognome', 'input-email', 'input-messaggio'].forEach(id => set(id, d[id]));
         if (d['input-prefisso']) { set('input-prefisso', d['input-prefisso']); onPrefixInput(document.getElementById('input-prefisso')); }
         if (d['input-telefono']) { set('input-telefono', d['input-telefono']); onPhoneInput(document.getElementById('input-telefono')); }
-        if (d['form-oggetto']) { set('form-oggetto', d['form-oggetto']); gestisciOggetto(); }
-        if (d['form-ritiro']) { set('form-ritiro', d['form-ritiro']); gestisciRitiro(); }
+        if (d['form-oggetto']) { set('form-oggetto', d['form-oggetto']); }
+        gestisciOggetto();
+        if (d['form-ritiro']) { set('form-ritiro', d['form-ritiro']); }
+        gestisciRitiro();
         set('input-codice', d['input-codice']);
         set('select-provincia', d['select-provincia']);
         const terms = document.getElementById('input-termini');
@@ -1927,6 +1932,12 @@ function initDraft() {
     form.addEventListener('input', saveDraft);
     form.addEventListener('change', saveDraft);
     window.addEventListener('pagehide', saveDraft);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveDraft(); });
+    // Salva subito anche quando si clicca un link che porta fuori dalla pagina (es. "Visualizza termini di servizio")
+    document.addEventListener('click', e => { if (e.target.closest && e.target.closest('a[href]')) saveDraft(); }, true);
+    // Alcuni browser ripristinano i campi dopo il caricamento o rimostrano la pagina dalla cache: si riapplica la bozza
+    window.addEventListener('pageshow', () => restoreDraft());
+    window.addEventListener('load', () => setTimeout(restoreDraft, 0));
 }
 
 // ===== Avvio: ogni pagina carica solo ciò che le serve =====
