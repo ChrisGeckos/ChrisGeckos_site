@@ -714,6 +714,23 @@ function sexI18nKey(sex) {
     return { 'Maschio': 'sex-male', 'Femmina': 'sex-female', 'Non Sessato': 'sex-unsexed', 'TSM': 'sex-tsm', 'TSF': 'sex-tsf' }[sex] || 'sex-unsexed';
 }
 
+// Comparsa graduale: le schede si dissolvono leggermente quando entrano nello schermo
+let revealObserver = null;
+function observeReveal(card) {
+    if (!('IntersectionObserver' in window)) return;
+    if (!revealObserver) {
+        revealObserver = new IntersectionObserver(entries => {
+            entries.filter(e => e.isIntersecting).forEach((e, i) => {
+                e.target.style.transitionDelay = Math.min(i, 5) * 70 + 'ms';
+                e.target.classList.add('in-view');
+                revealObserver.unobserve(e.target);
+            });
+        }, { threshold: 0.08 });
+    }
+    card.classList.add('reveal');
+    revealObserver.observe(card);
+}
+
 function buildAnimalCard(a) {
     const t = k => translations[currentLang][k];
     const card = document.createElement('div');
@@ -767,18 +784,26 @@ function buildAnimalCard(a) {
         const id = a.foto[0];
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'absolute inset-0 w-full h-full cursor-zoom-in';
+        btn.className = 'absolute inset-0 w-full h-full cursor-zoom-in overflow-hidden';
         btn.setAttribute('aria-label', a.cod);
+        // Foto sempre intera nella casella 4:3; lo spazio libero è riempito dalla stessa foto sfocata e scurita
+        const bg = document.createElement('img');
+        bg.className = 'photo-bg';
+        bg.alt = '';
+        bg.setAttribute('aria-hidden', 'true');
+        bg.loading = 'lazy';
+        bg.src = animalPhotoUrl(id, 800);
         const img = document.createElement('img');
         img.src = animalPhotoUrl(id, 800);
         img.alt = a.cod;
         img.loading = 'lazy';
-        img.className = 'w-full h-full object-cover';
+        img.className = 'relative w-full h-full object-contain';
         img.onload = () => ph.classList.add('hidden');
         img.onerror = () => {
-            if (!img.dataset.alt) { img.dataset.alt = '1'; img.src = animalPhotoAlt(id, 800); }
+            if (!img.dataset.alt) { img.dataset.alt = '1'; img.src = animalPhotoAlt(id, 800); bg.src = animalPhotoAlt(id, 800); }
             else btn.remove();
         };
+        btn.appendChild(bg);
         btn.appendChild(img);
         btn.addEventListener('click', () => openPoster(animalPhotoUrl(id, 1600), `${a.cod}${a.morph ? ' - ' + a.morph : ''}`));
         box.insertBefore(btn, box.firstChild.nextSibling);
@@ -800,6 +825,7 @@ function buildAnimalCard(a) {
         b.addEventListener('click', () => richiediInfo(a.cod));
         act.appendChild(b);
     }
+    observeReveal(card);
     return card;
 }
 

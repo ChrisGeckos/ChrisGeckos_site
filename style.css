@@ -103,3 +103,11 @@
 
 /* Esemplari prenotati: scheda attenuata (il nastro e la foto scurita restano ben visibili) */
 .avail-card.is-booked .avail-head, .avail-card.is-booked .avail-info, .avail-card.is-booked .avail-action { opacity: .6; }
+
+/* Foto delle schede: sfondo sfocato che riempie la casella attorno alla foto intera */
+.avail-photo .photo-bg { position: absolute; inset: -10%; width: 120%; height: 120%; max-width: none; object-fit: cover; filter: blur(14px) brightness(.55); }
+
+/* Comparsa graduale delle schede */
+.avail-card.reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease, border-color .15s ease; }
+.avail-card.reveal.in-view { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .avail-card.reveal { opacity: 1; transform: none; transition: none; } }
