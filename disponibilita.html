@@ -27,7 +27,7 @@
     <link rel="icon" type="image/png" href="favicon-chrisgeckos.png">
     <link rel="apple-touch-icon" href="favicon-chrisgeckos.png">
     <link rel="stylesheet" href="style.css?v=3">
-    <link rel="stylesheet" href="tailwind.css?v=3">
+    <link rel="stylesheet" href="tailwind.css?v=5">
 </head>
 <body class="flex flex-col min-h-screen">
 
@@ -140,8 +140,16 @@
                         </div>
                     </div>
                 </div>
-                <!-- Azzera filtri (la specie selezionata resta) -->
-                <div class="flex justify-end">
+                <!-- Ordinamento e azzera filtri (la specie selezionata resta) -->
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <label for="avail-sort" class="text-xs font-bold text-gray-400" data-i18n="filter-sort-label">Ordina per</label>
+                        <select id="avail-sort" onchange="applyAvailFilters()" class="bg-black/60 border border-white/20 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brandGreen">
+                            <option value="default" data-i18n="sort-default">Predefinito</option>
+                            <option value="price-asc" data-i18n="sort-price-asc">Prezzo: dal più basso</option>
+                            <option value="price-desc" data-i18n="sort-price-desc">Prezzo: dal più alto</option>
+                        </select>
+                    </div>
                     <button type="button" onclick="resetAvailFilters()" class="inline-flex items-center gap-2 border border-brandGreen text-brandGreen hover:bg-brandGreen hover:text-black font-bold text-sm px-4 py-2 rounded-xl transition-all">
                         <i class="fa-solid fa-rotate-left text-xs"></i><span data-i18n="filter-reset">Azzera filtri</span>
                     </button>
@@ -190,6 +198,6 @@
         <span id="toast-message" class="text-sm font-semibold"></span>
     </div>
 
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=5"></script>
 </body>
 </html>

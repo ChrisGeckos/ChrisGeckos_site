@@ -105,6 +105,10 @@ const translations = {
         "guides-seo": "Guide pratiche di terraristica: come allestire il terrario, quali temperature e umidità mantenere e come alimentare gechi e altri rettili.",
         "filter-search-label": "Cerca Morph / Codice",
         "filter-reset": "Azzera filtri",
+        "filter-sort-label": "Ordina per",
+        "sort-default": "Predefinito",
+        "sort-price-asc": "Prezzo: dal più basso",
+        "sort-price-desc": "Prezzo: dal più alto",
         "search-info": "Inserendo i singoli geni la ricerca restituisce anche le combinazioni.",
         "leopard-notice-1": "il sesso del geco leopardino è determinato dalla temperatura di incubazione delle uova",
         "leopard-notice-2": "F = sicura femmina<br>M = sicuro maschio<br>TSF = incubato come femmina<br>TSM = incubato come maschio",
@@ -298,6 +302,10 @@ const translations = {
         "guides-seo": "Practical terrarium-keeping guides: how to set up the enclosure, which temperatures and humidity to keep and how to feed geckos and other reptiles.",
         "filter-search-label": "Search Morph / Code",
         "filter-reset": "Reset filters",
+        "filter-sort-label": "Sort by",
+        "sort-default": "Default",
+        "sort-price-asc": "Price: low to high",
+        "sort-price-desc": "Price: high to low",
         "search-info": "Entering single genes, the search also returns the combinations.",
         "leopard-notice-1": "the sex of the leopard gecko is determined by the incubation temperature of the eggs",
         "leopard-notice-2": "F = proven female<br>M = proven male<br>TSF = incubated as female<br>TSM = incubated as male",
@@ -708,6 +716,7 @@ function buildAnimalCard(a) {
     card.setAttribute('data-sex', a.sex);
     card.setAttribute('data-status', a.stato);
     card.setAttribute('data-year', a.nascita ? a.nascita.date.getFullYear() : '');
+    card.setAttribute('data-price', a.prezzo !== null ? a.prezzo : '');
     card.setAttribute('data-search', `${a.cod} ${a.morph} ${a.note}`.toLowerCase());
 
     const statusBadge = a.stato === 'Disponibile'
@@ -940,13 +949,34 @@ document.addEventListener('click', e => {
     document.querySelectorAll('.info-wrap.open').forEach(w => { if (!w.contains(e.target)) w.classList.remove('open'); });
 });
 
-// Azzera sesso, anno, stato e ricerca; la specie selezionata resta com'è
+// Azzera sesso, anno, stato, ricerca e ordinamento; la specie selezionata resta com'è
 function resetAvailFilters() {
     document.getElementById('avail-filter-sex').value = 'all';
     document.getElementById('avail-filter-status').value = 'all';
     document.getElementById('avail-filter-year').value = 'all';
     document.getElementById('avail-search').value = '';
+    document.getElementById('avail-sort').value = 'default';
     applyAvailFilters();
+}
+
+// Ordinamento delle schede: predefinito (ordine del foglio), prezzo crescente o decrescente.
+// Gli esemplari senza prezzo restano sempre in fondo.
+function sortAvailCards(cards) {
+    const grid = document.getElementById('avail-grid');
+    const mode = document.getElementById('avail-sort').value;
+    const list = [...cards];
+    list.forEach((c, i) => { if (c.dataset.order === undefined) c.dataset.order = i; });   // ordine iniziale = ordine del foglio
+    const price = c => { const p = parseFloat(c.getAttribute('data-price')); return isNaN(p) ? null : p; };
+    list.sort((x, y) => {
+        if (mode !== 'default') {
+            const px = price(x), py = price(y);
+            if (px === null && py !== null) return 1;
+            if (px !== null && py === null) return -1;
+            if (px !== null && py !== null && px !== py) return mode === 'price-asc' ? px - py : py - px;
+        }
+        return x.dataset.order - y.dataset.order;
+    });
+    list.forEach(c => grid.appendChild(c));
 }
 
 function applyAvailFilters() {
@@ -981,6 +1011,8 @@ function applyAvailFilters() {
             card.classList.add('hidden');
         }
     });
+
+    sortAvailCards(cards);
 
     const noResults = document.getElementById('no-avail-results');
     if (visibleCount === 0) {
