@@ -130,6 +130,9 @@ const translations = {
         "filter-status-available": "Solo disponibili",
         "status-available": "Disponibile",
         "status-on-hold": "Prenotato",
+        "status-booked": "PRENOTATO",
+        "btn-unavailable": "Non più disponibile",
+        "filters-toggle": "Filtri",
         "show-tag-confirmed": "Confermato",
         "show-tables": "Tavoli:",
         "show-present": "PRESENTI",
@@ -327,6 +330,9 @@ const translations = {
         "filter-status-available": "Available only",
         "status-available": "Available",
         "status-on-hold": "Reserved",
+        "status-booked": "BOOKED",
+        "btn-unavailable": "No longer available",
+        "filters-toggle": "Filters",
         "show-tag-confirmed": "Confirmed",
         "show-tables": "Tables:",
         "show-present": "WE'LL BE THERE",
@@ -715,21 +721,24 @@ function buildAnimalCard(a) {
     card.setAttribute('data-species', a.specie);
     card.setAttribute('data-sex', a.sex);
     card.setAttribute('data-status', a.stato);
+    if (a.stato !== 'Disponibile') card.classList.add('is-booked');
     card.setAttribute('data-year', a.nascita ? a.nascita.date.getFullYear() : '');
     card.setAttribute('data-price', a.prezzo !== null ? a.prezzo : '');
     card.setAttribute('data-search', `${a.cod} ${a.morph} ${a.note}`.toLowerCase());
 
-    const statusBadge = a.stato === 'Disponibile'
-        ? `<span class="absolute top-4 right-4 bg-brandGreen text-black font-extrabold text-xs px-3 py-1 rounded-full badge-status" data-i18n="status-available">${esc(t('status-available'))}</span>`
-        : `<span class="absolute top-4 right-4 bg-black/80 border border-red-500 text-red-500 font-extrabold text-xs px-3 py-1 rounded-full badge-status" data-i18n="status-on-hold">${esc(t('status-on-hold'))}</span>`;
+    const booked = a.stato !== 'Disponibile';
+    const statusBadge = booked
+        ? `<div class="absolute top-0 right-0 w-40 h-40 overflow-hidden pointer-events-none z-10"><span class="absolute top-7 -right-11 w-48 text-center rotate-45 bg-brandYellow text-black font-extrabold text-xs tracking-widest py-1.5 shadow-md" data-i18n="status-booked">${esc(t('status-booked'))}</span></div>`
+        : `<span class="absolute top-4 right-4 bg-brandGreen text-black font-extrabold text-xs px-3 py-1 rounded-full badge-status" data-i18n="status-available">${esc(t('status-available'))}</span>`;
     const provenBadge = a.proven ? `<span class="absolute top-4 left-4 bg-black/70 border border-brandYellow text-brandYellow font-extrabold text-[11px] px-2.5 py-1 rounded-full" data-i18n="badge-breeder">${esc(t('badge-breeder'))}</span>` : '';
     const bd = a.nascita ? a.nascita.date : null;
     const bornStr = bd ? `<span class="born-date text-brandYellow font-semibold" data-fmt="${a.nascita.fmt}" data-date="${bd.getFullYear()}-${String(bd.getMonth() + 1).padStart(2, '0')}-${String(bd.getDate()).padStart(2, '0')}"></span>` : '<span class="text-brandYellow font-semibold">-</span>';
-    const price = a.prezzo !== null ? `<span class="text-2xl font-black text-brandGreen">€${esc(a.prezzo % 1 ? a.prezzo.toFixed(2) : a.prezzo)}</span>` : '';
+    const price = a.prezzo !== null ? `<span class="text-2xl font-black ${booked ? 'text-gray-500 line-through' : 'text-brandGreen'}">€${esc(a.prezzo % 1 ? a.prezzo.toFixed(2) : a.prezzo)}</span>` : '';
 
     card.innerHTML = `
-        <div class="avail-photo h-60 bg-white relative flex items-center justify-center">
+        <div class="avail-photo aspect-[4/3] bg-white relative flex items-center justify-center overflow-hidden">
             <i class="fa-solid fa-dragon text-6xl text-gray-300"></i>
+            ${booked ? '<div class="absolute inset-0 bg-black/60 pointer-events-none z-[5]"></div>' : ''}
             ${statusBadge}${provenBadge}
         </div>
         <div class="avail-head">
@@ -744,7 +753,7 @@ function buildAnimalCard(a) {
         <div class="avail-info">
             <div class="grid grid-cols-2 gap-x-3 gap-y-2 text-xs text-gray-300 border-y border-white/10 py-3">
                 <div><strong data-i18n="code-label">${esc(t('code-label'))}</strong> <span class="font-extrabold text-brandYellow break-all">${esc(a.cod)}</span></div>
-                <div><strong data-i18n="sex-label">${esc(t('sex-label'))}</strong> <span class="card-sex text-brandYellow font-semibold" data-i18n="${sexI18nKey(a.sex)}">${esc(t(sexI18nKey(a.sex)))}</span></div>
+                <div><strong data-i18n="sex-label">${esc(t('sex-label'))}</strong> <span class="card-sex text-brandYellow font-semibold" data-i18n="${sexI18nKey(a.sex)}">${esc(t(sexI18nKey(a.sex)))}</span>${a.sex === 'Maschio' ? ' <i class="fa-solid fa-mars text-sky-400 text-sm align-middle" title="♂"></i>' : a.sex === 'Femmina' ? ' <i class="fa-solid fa-venus text-pink-400 text-sm align-middle" title="♀"></i>' : ''}</div>
                 <div><strong data-i18n="born-label">${esc(t('born-label'))}</strong> ${bornStr}</div>
                 <div><strong data-i18n="notes-label">${esc(t('notes-label'))}</strong> <span class="card-notes text-brandYellow font-semibold break-words">${esc(a.note || '-')}</span></div>
             </div>
@@ -764,7 +773,7 @@ function buildAnimalCard(a) {
         img.src = animalPhotoUrl(id, 800);
         img.alt = a.cod;
         img.loading = 'lazy';
-        img.className = 'w-full h-full object-contain';
+        img.className = 'w-full h-full object-cover';
         img.onload = () => ph.classList.add('hidden');
         img.onerror = () => {
             if (!img.dataset.alt) { img.dataset.alt = '1'; img.src = animalPhotoAlt(id, 800); }
@@ -775,9 +784,15 @@ function buildAnimalCard(a) {
         box.insertBefore(btn, box.firstChild.nextSibling);
     }
 
-    // Pulsante di prenotazione (non per gli esemplari già prenotati)
-    if (a.stato === 'Disponibile') {
-        const act = card.querySelector('.avail-action');
+    // Pulsante di prenotazione; per gli esemplari già prenotati compare "Non più disponibile"
+    const act = card.querySelector('.avail-action');
+    if (booked) {
+        const n = document.createElement('span');
+        n.className = 'inline-block text-center border border-white/20 text-gray-400 font-bold text-xs px-4 py-2 rounded-lg';
+        n.setAttribute('data-i18n', 'btn-unavailable');
+        n.textContent = t('btn-unavailable');
+        act.appendChild(n);
+    } else {
         const b = document.createElement('a');
         b.href = 'contatti.html#form-contatto-card';
         b.className = 'inline-block text-center bg-brandYellow hover:bg-yellow-500 text-black font-extrabold text-xs px-4 py-2 rounded-lg transition-all';
@@ -950,6 +965,24 @@ document.addEventListener('click', e => {
 });
 
 // Azzera sesso, anno, stato, ricerca e ordinamento; la specie selezionata resta com'è
+function toggleMobileFilters() {
+    const box = document.getElementById('avail-filters-extra');
+    const btn = document.getElementById('avail-filters-toggle');
+    const open = box.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
+// Numero di filtri attivi (escluso il filtro specie, sempre visibile), mostrato sul pulsante "Filtri" su mobile
+function updateFiltersCount() {
+    const badge = document.getElementById('avail-filters-count');
+    if (!badge) return;
+    const n = ['avail-filter-sex', 'avail-filter-status', 'avail-filter-year'].filter(id => document.getElementById(id).value !== 'all').length
+        + (document.getElementById('avail-search').value.trim() ? 1 : 0)
+        + (document.getElementById('avail-sort').value !== 'default' ? 1 : 0);
+    badge.textContent = n;
+    badge.classList.toggle('hidden', n === 0);
+}
+
 function resetAvailFilters() {
     document.getElementById('avail-filter-sex').value = 'all';
     document.getElementById('avail-filter-status').value = 'all';
@@ -1013,6 +1046,7 @@ function applyAvailFilters() {
     });
 
     sortAvailCards(cards);
+    updateFiltersCount();
 
     const noResults = document.getElementById('no-avail-results');
     if (visibleCount === 0) {

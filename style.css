@@ -96,3 +96,10 @@
 .doc-content table { width: 100%; border-collapse: collapse; margin: 0 0 1.2rem; display: block; overflow-x: auto; }
 .doc-content th, .doc-content td { border: 1px solid rgba(255,255,255,.2); padding: .45rem .7rem; text-align: left; vertical-align: top; }
 .doc-content th { background: rgba(34,197,94,.15); color: #fff; }
+
+/* Filtri comprimibili su mobile (pagina Disponibilità) */
+@media (max-width: 639px) { #avail-filters-extra.open { display: block; } }
+#avail-filters-toggle[aria-expanded="true"] #avail-filters-chevron { transform: rotate(180deg); }
+
+/* Esemplari prenotati: scheda attenuata (il nastro e la foto scurita restano ben visibili) */
+.avail-card.is-booked .avail-head, .avail-card.is-booked .avail-info, .avail-card.is-booked .avail-action { opacity: .6; }
