@@ -111,3 +111,8 @@
 .avail-card.reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease, border-color .15s ease; }
 .avail-card.reveal.in-view { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .avail-card.reveal { opacity: 1; transform: none; transition: none; } }
+
+/* Foto delle schede: dissolvenza all'arrivo dell'immagine */
+.avail-photo .photo-fg, .avail-photo .photo-bg { opacity: 0; transition: opacity .35s ease; }
+.avail-photo .photo-fg.loaded, .avail-photo .photo-bg.loaded { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .avail-photo .photo-fg, .avail-photo .photo-bg { transition: none; } }

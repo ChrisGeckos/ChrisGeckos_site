@@ -708,6 +708,9 @@ function parseAnimaliCsv(text) {
 }
 
 function animalPhotoUrl(id, size) { return `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${size}`; }
+// Foto delle schede: la miniatura grande ha due misure (schermi normali / ad alta densità) e lo sfondo sfocato ne usa una minuscola
+const PHOTO_SIZES = '(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw';
+let cardPhotoCount = 0;   // le prime foto si caricano subito, le altre quando si avvicinano allo schermo
 function animalPhotoAlt(id, size) { return `https://lh3.googleusercontent.com/d/${encodeURIComponent(id)}=w${size}`; }
 
 function sexI18nKey(sex) {
@@ -791,17 +794,27 @@ function buildAnimalCard(a) {
         bg.className = 'photo-bg';
         bg.alt = '';
         bg.setAttribute('aria-hidden', 'true');
-        bg.loading = 'lazy';
-        bg.src = animalPhotoUrl(id, 800);
+        const eager = cardPhotoCount++ < 3;
+        bg.loading = eager ? 'eager' : 'lazy';
+        bg.decoding = 'async';
+        bg.src = animalPhotoUrl(id, 64);
+        bg.onload = () => bg.classList.add('loaded');
         const img = document.createElement('img');
+        img.srcset = `${animalPhotoUrl(id, 480)} 480w, ${animalPhotoUrl(id, 800)} 800w`;
+        img.sizes = PHOTO_SIZES;
         img.src = animalPhotoUrl(id, 800);
         img.alt = a.cod;
-        img.loading = 'lazy';
-        img.className = 'relative w-full h-full object-contain';
-        img.onload = () => ph.classList.add('hidden');
+        img.loading = eager ? 'eager' : 'lazy';
+        img.decoding = 'async';
+        if (cardPhotoCount === 1) img.setAttribute('fetchpriority', 'high');
+        img.className = 'photo-fg relative w-full h-full object-contain';
+        img.onload = () => { ph.classList.add('hidden'); img.classList.add('loaded'); };
         img.onerror = () => {
-            if (!img.dataset.alt) { img.dataset.alt = '1'; img.src = animalPhotoAlt(id, 800); bg.src = animalPhotoAlt(id, 800); }
-            else btn.remove();
+            if (!img.dataset.alt) {
+                img.dataset.alt = '1';
+                img.removeAttribute('srcset'); img.removeAttribute('sizes');
+                img.src = animalPhotoAlt(id, 800); bg.src = animalPhotoAlt(id, 64);
+            } else btn.remove();
         };
         btn.appendChild(bg);
         btn.appendChild(img);
@@ -861,14 +874,30 @@ function renderAnimali() {
     (keep || all).classList.add('active');
 
     grid.innerHTML = '';
+    cardPhotoCount = 0;
     animaliData.forEach(a => grid.appendChild(buildAnimalCard(a)));
     formatBornDates();
     updateSexOptions();
     applyAvailFilters();
 }
 
+// L'ultimo elenco ricevuto dall'app web resta salvato nel browser: alla visita successiva schede e foto compaiono subito
+// (le foto iniziano a caricarsi senza attendere la risposta del foglio) e poi si aggiornano solo se qualcosa è cambiato.
+const ANIMALI_CACHE_KEY = 'cg_cache_animali';
+const ANIMALI_CACHE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+function readAnimaliCache() {
+    try {
+        const c = JSON.parse(localStorage.getItem(ANIMALI_CACHE_KEY) || 'null');
+        return c && Array.isArray(c.animali) && Date.now() - c.ts < ANIMALI_CACHE_MAX_AGE_MS ? c.animali : null;
+    } catch (e) { return null; }
+}
+function writeAnimaliCache(raw) {
+    try { localStorage.setItem(ANIMALI_CACHE_KEY, JSON.stringify({ ts: Date.now(), animali: raw })); } catch (e) { /* ignora */ }
+}
+
 async function loadAnimali() {
-    animaliData = null;
+    const cachedRaw = readAnimaliCache();
+    animaliData = cachedRaw ? cachedRaw.map(animalFromFields).filter(Boolean) : null;
     renderAnimali();
     let list = null;
     if (ANIMALI_API_URL) {
@@ -876,11 +905,15 @@ async function loadAnimali() {
             const res = await fetchTimeout(ANIMALI_API_URL, ANIMALI_TIMEOUT_MS);
             const json = await res.json();
             if (!json || !json.ok || !Array.isArray(json.animali)) throw new Error('Risposta non valida');
+            writeAnimaliCache(json.animali);
+            // elenco identico a quello già mostrato: niente da ridisegnare (le foto restano dove sono)
+            if (cachedRaw && JSON.stringify(cachedRaw) === JSON.stringify(json.animali)) return;
             list = json.animali.map(animalFromFields).filter(Boolean);
             if (json.senzaFoto && json.senzaFoto.length) console.info('Esemplari senza foto in cartella:', json.senzaFoto);
             if (json.fotoOrfane && json.fotoOrfane.length) console.info('Foto senza esemplare nel foglio:', json.fotoOrfane);
         } catch (err) {
             console.warn('App web delle foto non raggiungibile, leggo solo il foglio:', err);
+            if (cachedRaw) return;   // si resta con l'ultimo elenco noto
         }
     }
     if (!list) {
