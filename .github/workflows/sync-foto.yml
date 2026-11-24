@@ -14,6 +14,7 @@ on:
 permissions:
   contents: write
   actions: write
+  pages: write
 
 concurrency:
   group: sync-foto
@@ -53,10 +54,12 @@ jobs:
           fi
 
       # Un salvataggio fatto da un'automazione non fa partire da solo le altre automazioni (regola di GitHub):
-      # per questo si avvia a mano la pubblicazione del sito (static.yml). Se il sito si pubblica in un altro modo, questo passaggio non fa nulla.
+      # per questo la pubblicazione del sito si avvia a mano. Se Pages usa "GitHub Actions" parte static.yml;
+      # se usa "Deploy from a branch" si chiede a Pages di ricostruire il sito. Il passaggio che non serve fallisce senza conseguenze.
       - name: Ripubblica il sito
         if: steps.commit.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh workflow run static.yml --ref "${{ github.ref_name }}" || echo "static.yml non trovato, nessuna ripubblicazione manuale necessaria."
+          gh workflow run static.yml --ref "${{ github.ref_name }}" || echo "static.yml non trovato: Pages probabilmente pubblica dal ramo."
+          gh api -X POST "repos/${{ github.repository }}/pages/builds" || echo "Ricostruzione da ramo non necessaria."
