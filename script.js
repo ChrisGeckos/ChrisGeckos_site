@@ -711,6 +711,12 @@ function animalPhotoUrl(id, size) { return `https://drive.google.com/thumbnail?i
 // Foto delle schede: la miniatura grande ha due misure (schermi normali / ad alta densità) e lo sfondo sfocato ne usa una minuscola
 const PHOTO_SIZES = '(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw';
 let cardPhotoCount = 0;   // le prime foto si caricano subito, le altre quando si avvicinano allo schermo
+// Foto salvate sul sito (cartella foto/, create dalla sincronizzazione con Drive). Il nome è il codice dell'esemplare
+// (stessa regola di scripts/sync_foto.py); se il file non c'è, la foto si legge da Google Drive.
+const LOCAL_PHOTO_DIR = 'foto/';
+function photoFileName(cod, i) {
+    return String(cod).replace(/[^A-Za-z0-9\-]+/g, '_').replace(/^_+|_+$/g, '') + (i ? '_' + (i + 1) : '') + '.webp';
+}
 function animalPhotoAlt(id, size) { return `https://lh3.googleusercontent.com/d/${encodeURIComponent(id)}=w${size}`; }
 
 function sexI18nKey(sex) {
@@ -797,28 +803,34 @@ function buildAnimalCard(a) {
         const eager = cardPhotoCount++ < 3;
         bg.loading = eager ? 'eager' : 'lazy';
         bg.decoding = 'async';
-        bg.src = animalPhotoUrl(id, 64);
+        const localUrl = LOCAL_PHOTO_DIR + encodeURIComponent(photoFileName(a.cod, 0));
+        bg.src = localUrl;   // stesso file della foto nitida: viene scaricato una volta sola
         bg.onload = () => bg.classList.add('loaded');
         const img = document.createElement('img');
-        img.srcset = `${animalPhotoUrl(id, 480)} 480w, ${animalPhotoUrl(id, 800)} 800w`;
-        img.sizes = PHOTO_SIZES;
-        img.src = animalPhotoUrl(id, 800);
+        img.src = localUrl;
         img.alt = a.cod;
         img.loading = eager ? 'eager' : 'lazy';
         img.decoding = 'async';
         if (cardPhotoCount === 1) img.setAttribute('fetchpriority', 'high');
         img.className = 'photo-fg relative w-full h-full object-contain';
         img.onload = () => { ph.classList.add('hidden'); img.classList.add('loaded'); };
+        // Percorso di ripiego: foto sul sito -> miniatura Drive -> indirizzo alternativo Drive -> nessuna foto
+        let stage = 0;
         img.onerror = () => {
-            if (!img.dataset.alt) {
-                img.dataset.alt = '1';
+            stage++;
+            if (stage === 1) {
+                img.srcset = `${animalPhotoUrl(id, 480)} 480w, ${animalPhotoUrl(id, 800)} 800w`;
+                img.sizes = PHOTO_SIZES;
+                img.src = animalPhotoUrl(id, 800);
+                bg.src = animalPhotoUrl(id, 64);
+            } else if (stage === 2) {
                 img.removeAttribute('srcset'); img.removeAttribute('sizes');
                 img.src = animalPhotoAlt(id, 800); bg.src = animalPhotoAlt(id, 64);
             } else btn.remove();
         };
         btn.appendChild(bg);
         btn.appendChild(img);
-        btn.addEventListener('click', () => openPoster(animalPhotoUrl(id, 1600), `${a.cod}${a.morph ? ' - ' + a.morph : ''}`));
+        btn.addEventListener('click', () => openPoster(stage === 0 ? localUrl : animalPhotoUrl(id, 1600), `${a.cod}${a.morph ? ' - ' + a.morph : ''}`));
         box.insertBefore(btn, box.firstChild.nextSibling);
     }
 

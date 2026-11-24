@@ -1,0 +1,49 @@
+name: Sincronizza foto
+
+# Si avvia da solo ogni ora e a mano (scheda "Actions" > "Sincronizza foto" > "Run workflow")
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+    inputs:
+      forza:
+        description: 'Ricarica e sostituisci TUTTE le foto (da usare se hai sostituito una foto su Drive mantenendo lo stesso file)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-foto
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Installa librerie
+        run: pip install pillow requests
+
+      - name: Scarica, converte e salva le foto
+        env:
+          FORCE: ${{ inputs.forza && '1' || '0' }}
+        run: python scripts/sync_foto.py
+
+      - name: Salva le modifiche nel sito
+        run: |
+          git config user.name  "ChrisGeckos foto bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add foto
+          if git diff --cached --quiet; then
+            echo "Nessuna foto nuova o cambiata."
+          else
+            git commit -m "Sincronizza foto esemplari"
+            git push
+          fi
